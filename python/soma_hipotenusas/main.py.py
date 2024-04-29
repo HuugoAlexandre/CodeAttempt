@@ -1,3 +1,8 @@
+"""
+Devolve a soma de todos os inteiros entre 1 e 'n' que são comprimento da hipotenusa
+de algum triângulo retângulo com catetos inteiros.
+"""
+
 def soma_hipotenusa(n):
     soma = 0
     for i in range(1, n + 1):
