@@ -1,13 +1,19 @@
 .data
     opcoes: .asciiz "\n1 - Fahrenheit -> Celsius\n2 - Fibonacci\n3 - Enésimo par\n4 - Sair\n: "
+    
     entradaFahrenheit: .asciiz "Insira a temperatura em Fahrenheit: "
     entradaFibonnacci: .asciiz "Insira um número: " 
     entradaEnesimoNumero: .asciiz "Informe N: "
+    
     printEnesimoPar: .asciiz "O Enésimo par é: "
     printCelsius: .asciiz "Em Celsius: "
+    printFiboErro: .asciiz "Termo inválido para sequência."
+    printFibo: .asciiz "O resultado é: "
     sairMsg: .asciiz "Você escolheu sair."
+    
     trintaeDois: .float 32.0
     umOito: .float 1.8
+    
     newline: .asciiz "\n"
     
 .text
@@ -62,8 +68,67 @@ mostraEnesimoPar:
     
     jr $ra
 Fibo:
-       
-    j while     
+    la $a0, entradaFibonnacci
+    li $v0, 4
+    syscall 
+    
+    jal calculaFibo
+          
+    j while
+    
+calculaFibo:
+    li $v0, 5
+    syscall
+    
+    blez $v0, fibonnacciErro
+    
+    move $t0, $v0
+    
+    li $t1, 0
+    li $a1, -1	# t2
+    li $a2, 1	# t3
+    
+    jal fiboLoop	#v0 guarda o resultado
+    jal fiboResultado
+    j while
+    
+fiboLoop:
+    bgt $t1, $t0, retornaResultado
+    add $t1, $t1, 1
+	
+    move $t4, $a2 
+    add $a2, $a2, $a1 
+    move $a1, $t4 
+    
+    move $v0, $a2
+    j fiboLoop  
+        
+retornaResultado:
+    jr $ra
+    
+fiboResultado:
+    move $t5, $v0
+    
+    la $a0, printFibo
+    li $v0, 4
+    syscall
+
+    move $a0, $t5
+    li $v0, 1
+    syscall  
+    
+    la $a0, newline
+    li $v0, 4
+    syscall
+    
+    jr $ra                       
+fibonnacciErro:
+    la $a0, printFiboErro
+    li $v0, 4
+    syscall 
+    
+    j while
+            
 sair:
     la $a0, sairMsg
     li $v0, 4
